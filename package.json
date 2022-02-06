@@ -2,21 +2,23 @@
   "name": "prepare-react18",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "12.0.10",
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "autoprefixer": "^10.4.2",
+    "next": "^12.0.10",
+    "react": "^18.0.0-rc.0",
+    "react-dom": "^18.0.0-rc.0"
   },
   "devDependencies": {
     "@types/node": "17.0.15",
     "@types/react": "17.0.39",
     "eslint": "8.8.0",
     "eslint-config-next": "12.0.10",
+    "tailwindcss": "^3.0.18",
     "typescript": "4.5.5"
   }
 }
