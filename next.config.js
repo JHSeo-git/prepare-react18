@@ -3,8 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   experimental: {
-    concurrentFeatures: true,
-    serverComponents: true,
+    reactRoot: true,
+    // serverComponents: true,
+    runtime: 'edge',
   },
 };
 
