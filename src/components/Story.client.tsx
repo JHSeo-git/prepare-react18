@@ -28,20 +28,19 @@ function Story({ item }: StoryProps) {
       </div>
       <div className="flex gap-2 flew-wrap mt-2">
         <p className="text-sm text-gray-900">
-          Point:{' '}
-          <span className="text-amber-700 tabular-nums">{item.score}</span>
+          Point: <em className="text-amber-700 tabular-nums">{item.score}</em>
         </p>
         <p className="text-sm text-gray-900">
           Comment:{' '}
-          <span className="text-amber-700 tabular-nums">
+          <em className="text-amber-700 tabular-nums">
             {item.descendants ?? 0}
-          </span>
+          </em>
         </p>
         <p className="text-sm text-gray-900">
           Published:{' '}
-          <span className="text-amber-700 tabular-nums">
+          <em className="text-amber-700 tabular-nums">
             {item.time ? new Date(item.time * 1000).toLocaleString() : 0}
-          </span>
+          </em>
         </p>
       </div>
     </div>
