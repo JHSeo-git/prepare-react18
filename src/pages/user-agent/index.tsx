@@ -10,7 +10,7 @@ function UserAgentPage(props: UserAgentPageProps) {
     return <div>OS: {typeof os === 'string' ? os : os.join(' ')}</div>;
   }
 
-  return <div>OS in Headers. Check yourself.</div>;
+  return <div>UA OS Page</div>;
 }
 
 export default UserAgentPage;
