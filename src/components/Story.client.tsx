@@ -13,7 +13,7 @@ function Story({ item }: StoryProps) {
           href={item.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-block text-sm text-blue-700 transition-colors hover:text-blue-500"
+          className="inline-block font-bold text-base text-blue-600 transition-colors hover:text-blue-500"
         >
           {item.title}
         </a>
