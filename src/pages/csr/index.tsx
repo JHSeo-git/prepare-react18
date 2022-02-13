@@ -9,8 +9,6 @@ import Layout from '@/components/Layout.client';
 import useData from '@/lib/use-data';
 import fetchData from '@/lib/fetch-data';
 
-export type CSRPageProps = {};
-
 function StoryWithData({ id }: { id: string }) {
   const data = useData<Item>(`s-${id}`, () => fetchData(`item/${id}`));
   return <Story item={data} />;
@@ -30,6 +28,8 @@ function NewsWithData() {
     </>
   );
 }
+
+export type CSRPageProps = {};
 
 function CSRPage(props: CSRPageProps) {
   // if (typeof window === 'undefined') {
