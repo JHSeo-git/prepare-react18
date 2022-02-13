@@ -4,7 +4,7 @@ const nextConfig = {
   swcMinify: true,
   experimental: {
     reactRoot: true,
-    // serverComponents: true,
+    serverComponents: true,
     runtime: 'edge',
   },
 };

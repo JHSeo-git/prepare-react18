@@ -1,5 +1,7 @@
-import NextLink from 'next/link';
 import type { NextPage } from 'next';
+
+import LinkSection from '@/components/LinkSection.client';
+
 import config from '../../next.config';
 
 const Home: NextPage = () => {
@@ -12,63 +14,39 @@ const Home: NextPage = () => {
           </h1>
         </div>
       </section>
-      {/* <section className="p-10 bg-slate-100">
-        <div className="max-w-5xl mx-auto my-0">
-          <h2 className="text-2xl font-bold text-slate-700 hover:text-slate-800 active:text-slate-900">
-            <NextLink href="/user-agent" passHref>
-              <a>Middleware</a>
-            </NextLink>
-          </h2>
-        </div>
-      </section> */}
-      <section className="p-10 bg-slate-100">
-        <div className="max-w-5xl mx-auto my-0">
-          <h2 className="text-2xl font-bold text-slate-700 hover:text-slate-800 active:text-slate-900">
-            <NextLink href="/user-agent" passHref>
-              <a className={'pointer-events-none text-slate-500'}>Middleware</a>
-            </NextLink>
-            <p className="text-sm text-slate-400">
-              <em>Not possible mode(concurrentFeatures mode)</em>
-            </p>
-          </h2>
-        </div>
-      </section>
-      <section className="p-10">
-        <div className="max-w-5xl mx-auto my-0">
-          <h2 className="text-2xl font-bold text-slate-700 hover:text-slate-800 active:text-slate-900">
-            <a href="/csr" target="_blank" rel="noopener noreferrer">
-              CSR Suspense(Alpha)
-            </a>
-          </h2>
-        </div>
-      </section>
-      <section className="p-10 bg-slate-100">
-        <div className="max-w-5xl mx-auto my-0">
-          <h2 className="text-2xl font-bold text-slate-700 hover:text-slate-800 active:text-slate-900">
-            <a href="/ssr" target="_blank" rel="noopener noreferrer">
-              SSR Streaming(Alpha)
-            </a>
-          </h2>
-        </div>
-      </section>
-      <section className="p-10 ">
-        <div className="max-w-5xl mx-auto my-0">
-          <h2 className="text-2xl font-bold text-slate-700 hover:text-slate-800 active:text-slate-900">
-            <a href="/rsc" target="_blank" rel="noopener noreferrer">
-              React Server Components(Alpha)
-            </a>
-          </h2>
-        </div>
-      </section>
-      <section className="p-10 bg-slate-100">
-        <div className="max-w-5xl mx-auto my-0">
-          <h2 className="text-2xl font-bold text-slate-700 hover:text-slate-800 active:text-slate-900">
-            <a href="/sca" target="_blank" rel="noopener noreferrer">
-              Server Components APIs(Alpha)
-            </a>
-          </h2>
-        </div>
-      </section>
+      <LinkSection
+        odd
+        disabled
+        href="/user-agent"
+        title="Middleware"
+        description="Not possible mode(concurrentFeatures mode)"
+      />
+      <LinkSection
+        href="/ssr"
+        title="SSR"
+        target="_blank"
+        rel="noopener noreferrer"
+      />
+      <LinkSection
+        odd
+        href="/ssg"
+        title="SSG"
+        target="_blank"
+        rel="noopener noreferrer"
+      />
+      <LinkSection
+        href="/csr"
+        title="CSR Suspense(Alpha)"
+        target="_blank"
+        rel="noopener noreferrer"
+      />
+      <LinkSection
+        odd
+        href="/rsc"
+        title="RSC(Alpha)"
+        target="_blank"
+        rel="noopener noreferrer"
+      />
     </div>
   );
 };
