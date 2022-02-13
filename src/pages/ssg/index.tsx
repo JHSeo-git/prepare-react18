@@ -1,12 +1,10 @@
-import type { GetServerSideProps } from 'next';
-import type { Item } from '@/types/types';
-
-import fetchData from '@/lib/fetch-data';
-
-import Story from '@/components/Story.client';
 import Layout from '@/components/Layout.client';
+import Story from '@/components/Story.client';
+import fetchData from '@/lib/fetch-data';
+import { Item } from '@/types/types';
+import { GetStaticProps } from 'next';
 
-export const getServerSideProps: GetServerSideProps = async context => {
+export const getStaticProps: GetStaticProps = async context => {
   const storyIds = await fetchData('topstories');
   const data = await Promise.all<Item[]>(
     storyIds.slice(0, 30).map((id: string) => fetchData(`item/${id}`))
@@ -19,13 +17,13 @@ export const getServerSideProps: GetServerSideProps = async context => {
   };
 };
 
-export type SSRPageProps = {
+export type SSGPageProps = {
   data: Item[];
 };
 
-function SSRPage({ data }: SSRPageProps) {
+function SSGPage({ data }: SSGPageProps) {
   return (
-    <Layout title="SSR" description="Hacker News API: Top Stories(30)">
+    <Layout title="SSG" description="Hacker News API: Top Stories(30)">
       {data.map((item, i) => (
         <Story key={i} item={item} />
       ))}
@@ -33,4 +31,4 @@ function SSRPage({ data }: SSRPageProps) {
   );
 }
 
-export default SSRPage;
+export default SSGPage;
