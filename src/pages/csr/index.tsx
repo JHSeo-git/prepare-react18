@@ -32,6 +32,9 @@ function NewsWithData() {
 }
 
 function CSRPage(props: CSRPageProps) {
+  // if (typeof window === 'undefined') {
+  //   return <div>Loading...</div>;
+  // }
   return (
     <Layout title="CSR" description="Hacker News API: Top Stories(30)">
       <Suspense fallback={<Spinner />}>
