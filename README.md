@@ -3,5 +3,5 @@
 Practice react@18 with Nextjs
 
 - middleware
-- rsc
 - concurrent
+- rsc
