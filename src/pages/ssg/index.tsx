@@ -1,8 +1,10 @@
-import Layout from '@/components/Layout.client';
-import Story from '@/components/Story.client';
+import type { GetStaticProps } from 'next';
+import type { Item } from '@/types/types';
+
 import fetchData from '@/lib/fetch-data';
-import { Item } from '@/types/types';
-import { GetStaticProps } from 'next';
+
+import Story from '@/components/Story.client';
+import Layout from '@/components/Layout.client';
 
 export const getStaticProps: GetStaticProps = async context => {
   const storyIds = await fetchData('topstories');
