@@ -1,6 +1,6 @@
 # Diary
 
-React 18 rc with Nextjs.
+React 18 rc with Nextjs. 해보자?
 
 - CSR, SSR, SSG, HTTP Streaming, RSC, Concurrent, ...
 
@@ -13,8 +13,7 @@ React 18 rc with Nextjs.
 
 늘 그렇듯이 개발의 세계는 무한에 가까운 속도로 변화되고 있습니다.
 
-React를 쓰고는 있지만 진정 어떻게 잘 쓰는건지는 잘 모르면서 다음 것으로 넘어가도 되는지 불안감이 있지만,
-그래도 앞으로 나아가야할 것 같았습니다.
+React를 쓰고는 있지만 진정 어떻게 잘 쓰는건지는 잘 모르면서 다음 것으로 넘어가도 되는지 불안감이 있지만, 그래도 앞으로 나아가야할 것 같았습니다.
 
 요점은 React 18이 rc가 되면서 꽤 큰 변화를 야기하게 될 것 같아 미리 공부하는 느낌으로 진행합니다.
 
@@ -33,7 +32,7 @@ nextjs의 experiment 기능 중 concurrentFeatures(next 정식 release 12버전)
 
 여기에 시간을 꽤 뺏기면서 반 포기상태로 잠들었습니다.
 
-next.js 카나리 버전을 사용하게 되면 기본적으로 concurrent모드가 설정되기 때문에 문제가 발생합니다. 이런 문제가 해결되는지 지켜봐야 될 것 같습니다.
+next.js canary 버전을 사용하게 되도 문제가 발생합니다. 이런 문제가 해결되는지 지켜봐야 될 것 같습니다.
 
 ## day3
 
@@ -52,12 +51,11 @@ Unhandled Runtime Error
 Error: An error occurred during hydration. The server HTML was replaced with client content
 ```
 
-위 오류가 나타났습니다. server 에서 만든 html에 client 에서 hydration할 때 해당 컴포넌트를 mismatch하면서 나타나는 오류로 적혀져 있는데(`throwOnHydrationMismatchIfConcurrentMode`
-) reconciliation시에 current가 null이면 이 오류를 던지게 되어있습니다.
+위 오류가 나타났습니다. server 에서 만든 html에 client 에서 hydration할 때 해당 컴포넌트를 mismatch하면서 나타나는 오류로 적혀져 있는데(`throwOnHydrationMismatchIfConcurrentMode`) reconciliation시에 current가 null이면 이 오류를 던지게 되어있습니다.
 
 current 트리가 null이면 이런 오류가 발생하는데 이런 오류는 어떻게 해결할 수 있을까요?
 
-React reconcilation은 VDOM을 더블 버퍼링(Current, WorkInProgress)을 구성하여 변경 사항이 있을 때만 업데이트 하는 방식입니다. 각 노드들은 Fiber라고 하는 객체로 관리되며 실제적으로 React의 가장 중심이 되는 부분입니다.(~~너무 어렵습니다...~~)
+React reconcilation은 VDOM을 더블 버퍼링(current, workInProgress)을 구성하여 변경 사항이 있을 때만 업데이트 하는 방식입니다. 각 노드들은 Fiber라고 하는 객체로 관리되며 실제적으로 React의 가장 중심이 되는 부분입니다. root에서 쭈우우욱 트리형태로 그려진다고 생각하시면 됩니다. 근데 그게 2개(current, wip)로 구성되어있고, 변경점만 업데이트한다! 라고 생각하는데 그게 맞나? 어째뜬 그렇습니다...(~~너무 어렵습니다...~~)
 
 이 부분은 여기까지 생각하고... 왜 안되었는지를 해당 위치에 comment를 살펴보면...알 수 있을까?
 
@@ -74,9 +72,9 @@ function throwOnHydrationMismatchIfConcurrentMode(fiber) {
 // boundary's children. This involves some custom reconciliation logic. Two
 // main reasons this is so complicated.
 
-// 우리는 Suspense boundary의 children을 reconcile 합니다. 이것은 몇가지 custom한
-// reconciliation logic을 포함하고 있습니다. 이것이 매우 복잡한 두 가지 이유가 다음과 같습니다.
-// 두가지 이유라고 했는데 세가지 이유 적혀있음... 흠?
+우리는 Suspense boundary의 children을 reconcile 합니다. 이것은 몇가지 custom한
+reconciliation logic을 포함하고 있습니다. 이것이 매우 복잡한 두 가지 이유가 다음과 같습니다.
+두가지 이유라고 했는데 세가지 이유 적혀있음... 흠?
 
 // First, Legacy Mode has different semantics for backwards compatibility. The
 // primary tree will commit in an inconsistent state, so when we do the
@@ -87,21 +85,21 @@ function throwOnHydrationMismatchIfConcurrentMode(fiber) {
 // state, no effects. Same as what we do for Offscreen (except that
 // Offscreen doesn't have the first render pass).
 
-// 첫번째 이유. Legacy 모드에서는 이전 버전과 호환성을 위한 다른 semantics를 가지고 있습니다.
-// 그래서 primary tree(기본 트리)는 일치하지 않는 상태를 commit 할 것입니다. fallback을 렌더하기
-// 위한 두번째 pass에서 완전히 부서지지 않게 하기 위한 매우 영리한 hacks를 합니다. hidden tree로부터
-// effects와 deletions을 옮기는 것과 같은 것들입니다. concurrent mode에서는 더 쉽습니다.
-// 우리가 기본 트리에서 완전히 가져오기 때문에, 그리고 오래된 상태를 남겨두고 effect를 남겨두지 않기 때문입니다.
-// Offscreen에서 하는 것과 동일합니다.(Offscreen에서 첫 번째 render pass에서 가지지 못한 것들은
-// 제외됩니다.)
+첫번째 이유. Legacy 모드에서는 이전 버전과 호환성을 위한 다른 semantics를 가지고 있습니다.
+그래서 primary tree(기본 트리)는 일치하지 않는 상태를 commit 할 것입니다. fallback을 렌더하기
+위한 두번째 pass에서 완전히 부서지지 않게 하기 위한 매우 영리한 hacks를 합니다. hidden tree로부터
+effects와 deletions을 옮기는 것과 같은 것들입니다. concurrent mode에서는 더 쉽습니다.
+우리가 기본 트리에서 완전히 가져오기 때문에, 그리고 오래된 상태를 남겨두고 effect를 남겨두지 않기 때문입니다.
+Offscreen에서 하는 것과 동일합니다.(Offscreen에서 첫 번째 render pass에서 가지지 못한 것들은
+제외됩니다.)
 
 // Second is hydration. During hydration, the Suspense fiber has a slightly
 // different layout, where the child points to a dehydrated fragment, which
 // contains the DOM rendered by the server.
 
-// 두번째 이유는 hydration입니다. hydration하는 동안 Suspense fiber는 약간 다른 레이아웃을
-// 가집니다. 해당 레이아웃의 children은 dehydrated fragment를 가리키고 있습니다. 그리고
-// dehydrated fragment는 서버에서 렌더링된 DOM을 가지고 있습니다.
+두번째 이유는 hydration입니다. hydration하는 동안 Suspense fiber는 약간 다른 레이아웃을
+가집니다. 해당 레이아웃의 children은 dehydrated fragment를 가리키고 있습니다. 그리고
+dehydrated fragment는 서버에서 렌더링된 DOM을 가지고 있습니다.
 
 // Third, even if you set all that aside, Suspense is like error boundaries in
 // that we first we try to render one tree, and if that fails, we render again
@@ -109,13 +107,13 @@ function throwOnHydrationMismatchIfConcurrentMode(fiber) {
 // which branch we're currently rendering. Ideally we would model this using
 // a stack.
 
-// 세번째 이유. 위 2가지 이유를 셋팅을 하였더라도, Suspense는 우리가 먼저 하나의 tree를 렌더하려고 하는
-// 점에서 error boundaries와 같습니다. 그리고 그것이 만약 실패한다면, 우리는 다시 tree를 렌더를 하고 다른
-// tree로 변경합니다. try/catch 구문 처럼 말이죠. 그래서 우리는 현재 렌더링하고 잇는 branch를 track(기록)
-// 해야 합니다. 이상적으로 우리는 stack을 사용하여 이런 것을 모델합니다.
+세번째 이유. 위 2가지 이유를 셋팅을 하였더라도, Suspense는 우리가 먼저 하나의 tree를 렌더하려고 하는
+점에서 error boundaries와 같습니다. 그리고 그것이 만약 실패한다면, 우리는 다시 tree를 렌더를 하고 다른
+tree로 변경합니다. try/catch 구문 처럼 말이죠. 그래서 우리는 현재 렌더링하고 잇는 branch를 track(기록)
+해야 합니다. 이상적으로 우리는 stack을 사용하여 이런 것을 모델합니다.
 ```
 
-사실 읽어도 잘 모르겠습니다. 어째뜬 concurrent 모드 일 경우 hydration에서 문제가 발생하여 에러가 뜬다는 점 정도만 알 수 있을 것 같습니다. 카나리 버전이 아닌 12버전 대에서 concurrent 기능을 껐을 땐 에러가 발생하진 않았습니다.
+사실 읽어도 잘 모르겠습니다. 어째뜬 concurrent 모드 일 경우 hydration에서 문제가 발생하여 에러가 뜬다는 점 정도만 알 수 있을 것 같습니다. 카나리 버전이 아닌 12버전에서 concurrent 기능을 껐을 땐 에러가 발생하진 않았습니다.
 
 ## day5
 
@@ -123,7 +121,7 @@ function throwOnHydrationMismatchIfConcurrentMode(fiber) {
 
 SSR(`getServerSideProps`) 할 시에 에러가 계속 나길래 어떤 문제인지 확인하는데 시간이 걸렸습니다.
 
-에러 내용은 `getServerSideProps`의 return props가 serialized 가 안되었다는 내용이었습니다.
+에러 내용은 `getServerSideProps`의 return props가 serialize 가 안되었다는 내용이었습니다.
 
 몇 가지 확인 결과 값이 없었을 때 JSON 타입으로 serialize를 하지 못하는 원인이 있었습니다.
 
@@ -145,15 +143,41 @@ return {
 SSG(`getStaticPRops`)는 서버사이드라는 관점에서는 SSR과 거의 동일합니다. 개발 시에는 완전하게 동일하다고 볼 수 있습니다. 그 이유는 빌드 시에 generate를 하게 되는데 개발 모드에서는 매 요청마다 빌드를 하기 때문입니다.
 
 SSR과 SSG의 차이점은 빌드 시점에 있습니다. next build 시에 SSG(`getStatcProps`)를 통해 만들어진 페이지는 빌드 시에 페이지를 pre-rendering하게 됩니다. 그래서 배포된 환경에서는 SSR이 매 요청마다 페이지를 생성하는 것에 비해 만들어진 페이지를 받아오기 때문에 훨씬 빠르게 사용자는 페이지를 받아올 수 있습니다.
-(~~이런 점이 next.js가 편한다고 할까나...~~)
 
 ### RSC
 
 React Server Component. React 18 feature 중 하나입니다.
 
+기존 Next.js에서도 서버에서, 클라이언트에서 동작을 구분하기 위해서는 pages 하위에 page에 해당하는 파일에서만 `getServerProps` `getStatisProps` 등을 통해서만 가능했습니다. 개별 컴포넌트 파일에서는 불가능 했죠.
+
+RSC는 이것을 좀 더 명시적으로 구분하여 사용가능하게 합니다.
+그러면 어떻게 streaming할 대상과 csr할 대상을 구분하는걸까?
+
+파일명에 .server.js .client.js .js 형태로 구분합니다.
+
+- .server.js: 서버에서 동작
+- .client.js: 클라이언트에서 동작
+- .js: 서버, 클라이언트 둘다 사용
+
+또한 서버에서 동작할 때 필요한 번들들을 클라이언트로 내려받게 하지 않음으로 인해 번들사이즈가 줄어드는 효과도 생각할 수 있습니다.
+
+기존에 모든 컴포넌트들을 client로 내려 렌더링 했다면 이젠 나누어서 하는 것입니다.
+이를 위해 react에서는 streaming API을 사용합니다.
+
+### Streaming
+
+> Concurrent features in React 18 include built-in support for server-side Suspense and SSR streaming support, allowing you to server-render pages using HTTP streaming.
+
+concurrent모드 도입을 통해 react component들을 json처럼 직렬화해서 서버에서 맹글어서 Streaming합니다.
+
+클라이언트에서 React는 직렬화된 streaming 정보를 api 결과 받는것처럼 받아서 UI를 그릴 수 있습니다. 이 구조를 통해 더 나은 사용자 경험을 제공하는게 목표로 보입니다.
+
+suspense, error boundary를 통해 선언적으로 fetch 컴포넌트를 만들어 사용할 수 있습니다.
+(~~이젠 fetch effect에서 해방되는 건가...?~~)
+
 ### build
 
-![build-image](./images/build.png)
+![build.png](https://files.seonest.net/images/qnfqnfqnf/post/152/build.png)
 
 잉... SSR 페이지(/ssr)는 Server(람다) 표시로 나타나는게 맞는 것 같은데, Streaming(입실론) 표시로 나타나네요...?
 
@@ -163,19 +187,19 @@ SSG도 그렇고... dynamic route를 포함하지 않으면 이젠 무조건 Str
 
 ## 느낀점
 
-CSR이 혁신적인 느낌으로 다가온적이 있었는데 React팀에서는 이젠 이게 아니라는 거 같습니다. Nextjs처럼 SSR 라이브러리들이 만들어지고, Remix가 무료로 공개되는 것처럼 이젠 SPA(CSR)는 먼가 성능에 안좋고 옛날것처럼 보이게 되는것 같습니다.
+CSR이 혁신적인 느낌으로 다가온적이 있었는데 프론트 커뮤니티진영에서는 이젠 이게 아니라는 거 같습니다. Nextjs처럼 SSR 라이브러리들이 만들어지고, Remix가 무료로 공개되는 것처럼 이젠 SPA + CSR는 먼가 성능에 안좋고 옛날것처럼 보이게 되는것 같습니다.
 
-가능하면 서버사이드를 통해 static한 파일을 사용자들에게 던져주고, interactice한 모든 것들을 Streaming이라는 기술로 대체해버리는 느낌으로 가고 있는 것 같습니다.
+가능하면 서버사이드를 통해 static한 파일을 사용자들에게 던져주고, interactive한 모든 것들을 Streaming이라는 기술로 대체해버리는 느낌으로 가고 있는 것 같습니다.
 
 아마 React 18이 가져다 줄 영향은 React가 처음 나왔을 때의 그 느낌에 준하지 않을까 싶습니다.
 
-이젠 서버라는 개념이 반드시 들어가기 때문에 서버에서 동작할 수 있도록 ismorphic 서비스를 많이 찾게될지도 모르겠습니다. Remix도 그렇구요.
+이젠 서버라는 개념이 반드시 들어가기 때문에 서버에서 동작할 수 있도록 isomorphic 서비스를 많이 찾게될지도 모르겠습니다. Remix도 그렇구요.
 
-프론트엔드 개발자라면 이젠 서버, devOps와 같은 CI/CD, Docker, k8s, as-a-service 등 알아야 하는 시대가 곧 올 것 같습니다. 아니 벌써 왔는지도 모르겠습니다.
+프론트엔드 개발자라면 이젠 Server, ci/cd등 devOps, Docker, k8s, as-a-service 등 반드시 알아야 하는 시대가 곧 올 것 같습니다. 아니 벌써 왔는지도 모르겠습니다.
 
 다시 돌아가자면 저는 아직까진 Nextjs가 개인적으로 너무 좋습니다. 순수 React로 구현하는 것보다는 Nextjs를 사용하는 것이 훨씬 편하다고 느끼게 됩니다.
 
 또한 프론트엔드 영역이 무한히 확장된다는 느낌이 강합니다. 트렌드도 상당히 빠르게 진행됩니다. 현재 사용되는 기술들도 다 알지 못하고 불안함에 휩싸이지만 그래도 해야됩니다. 지금 당장 해야됩니다. 10분이라도 해야됩니다.
 
-그게 개발자에게 가장 중요한 것이라고 생각합니다.
+그게 많이 부족한 저에게 가장 중요한 것이라고 생각합니다.
 (~~그게 잘 안돼...~~)
