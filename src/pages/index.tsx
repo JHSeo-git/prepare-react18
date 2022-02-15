@@ -47,6 +47,12 @@ const Home: NextPage = () => {
         target="_blank"
         rel="noopener noreferrer"
       />
+      <LinkSection
+        href="/rsc/myPage"
+        title="RSC - 2"
+        target="_blank"
+        rel="noopener noreferrer"
+      />
     </div>
   );
 };
